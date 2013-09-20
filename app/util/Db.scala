@@ -2,6 +2,7 @@ package util
 import anorm._
 import java.io.BufferedReader
 import java.io.InputStreamReader
+import java.sql.Connection
 
 object Db { 
   

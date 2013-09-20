@@ -1,4 +1,4 @@
-package app.util.java;
+package notusing.util.java;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;

@@ -11,6 +11,7 @@ import scala.language.implicitConversions
 import scala.language.postfixOps
 import scala.collection.immutable.BitSet
 import util.Db
+import util.Sha
 import scala.language.implicitConversions
 
 object Permission extends Enumeration {
@@ -66,7 +67,7 @@ object User {
     def name() = "test"
     def password() = "secret"
     def enabled() = true
-    def hasPermission(perm: Permission.Value) = true
+    def hasPermission(perm: Permission.Value) = false
   }
 
   case class NullUser() extends User { 
@@ -91,10 +92,11 @@ object User {
           UPDATE Users SET LastLogin = now() 
           WHERE Name = {name}
           AND Password = {password}
-        """).on('name -> username, 'password -> password)
+        """).on('name -> username, 'password -> Sha.pwdhash(password))
         
         // users can authenticate via database lookup or via browser session
-        return (query.executeUpdate() > 0) || password == "@application.secret"
+        // return (query.executeUpdate() > 0) || password == "@application.secret"
+        return (query.executeUpdate() > 0)
       }
     }
   }
@@ -116,14 +118,14 @@ object User {
   def create(username:String, password:String, email:String, permissions:Long) = {
     DB.withConnection { implicit c =>
       SQL("INSERT INTO Users(Name,Password,Email,Permissions) VALUES ({name},{password},{email},{permissions})").on(
-        'name -> Db.normalizeName(username), 'password -> password, 'email -> email, 'permissions -> permissions).executeUpdate()
+        'name -> Db.normalizeName(username), 'password -> Sha.pwdhash(password), 'email -> email, 'permissions -> permissions).executeUpdate()
     }
   }
   
   def update(username:String, password:String, email:String, permissions:Long) = {
     DB.withConnection { implicit c =>
       SQL("UPDATE Users SET Password={password}, Email={email}, Permissions={permissions} WHERE Name={username}").on(
-        'username -> username, 'password -> password, 'email -> email, 'permissions -> permissions).executeUpdate()
+        'username -> username, 'password -> Sha.pwdhash(password), 'email -> email, 'permissions -> permissions).executeUpdate()
     }
   }
   

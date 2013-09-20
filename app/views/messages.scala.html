@@ -29,7 +29,7 @@
     @for(announcement <- announcements){
       <tr>
       <td>@announcement.createTime</td>
-      <td>@play.api.templates.Html(announcement.message)</td>
+      <td>@announcement.message</td>
       @if(user.hasPermission(Permission.MakeAnnouncements)) {
       <td><a id="disable-button-@announcement.id" href="#" class="fancy-button">Dismiss</a></td>
       <script type="text/javascript">
