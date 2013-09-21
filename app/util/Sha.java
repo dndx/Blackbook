@@ -3,6 +3,8 @@ package util;
 import java.security.*;
 public class Sha {
 	public static String pwdhash(String pwd) throws NoSuchAlgorithmException {
+		if (pwd.length() == 128)
+			return pwd;
 		for (int i=0; i<100; i++) {
 			pwd = hash512(pwd);
 		}

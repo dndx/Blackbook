@@ -24,7 +24,7 @@ object Transactions extends Controller with Secured {
          )
   )
   
-  def transactions() = WithPermissions() { implicit request => 
+  def transactions() = WithPermissions(Perm.ViewLedger) { implicit request => 
     Ok(views.html.transactions.index(Transaction.all()))
   }
   
